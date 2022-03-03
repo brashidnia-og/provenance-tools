@@ -1,0 +1,15 @@
+# Provenance blockchain tools
+
+
+## GCP VM instance config
+series=E2
+machine-type=e2-micro
+
+boot-disk-type=ssd
+os=ubuntu 20.04LTS
+storage=10GB
+
+access-scopes=allow full access
+
+firewall-http=allow
+firewall-https=allow
