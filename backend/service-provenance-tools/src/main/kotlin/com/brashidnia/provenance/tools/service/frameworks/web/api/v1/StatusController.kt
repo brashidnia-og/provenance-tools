@@ -1,16 +1,62 @@
 package com.brashidnia.provenance.tools.service.frameworks.web.api.v1
 
+import com.brashidnia.provenance.tools.service.domain.api.SensorStatusResponse
 import com.brashidnia.provenance.tools.service.domain.api.StatusResponse
+import com.brashidnia.provenance.tools.service.domain.api.error.ServerError
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.lang.Compiler.command
+
 
 @RestController
 @RequestMapping("/api/v1/status")
 class StatusController {
+    companion object {
+        val LOG = LoggerFactory.getLogger(StatusController::class.java.name)
+    }
 
     @GetMapping
     fun getStatus(): StatusResponse {
         return StatusResponse("WORKING")
+    }
+
+    @GetMapping("/sensors")
+    fun getSensorStatus(): SensorStatusResponse {
+        val command = "sensors"
+        LOG.debug("Executing BASH command:\n   $command")
+        val r = Runtime.getRuntime()
+        // Use bash -c so we can handle things like multi commands separated by ; and
+        // things like quotes, $, |, and \. My tests show that command comes as
+        // one argument to bash, so we do not need to quote it to make it one thing.
+        // Also, exec may object if it does not have an executable file as the first thing,
+        // so having bash here makes it happy provided bash is installed and in path.
+        // Use bash -c so we can handle things like multi commands separated by ; and
+        // things like quotes, $, |, and \. My tests show that command comes as
+        // one argument to bash, so we do not need to quote it to make it one thing.
+        // Also, exec may object if it does not have an executable file as the first thing,
+        // so having bash here makes it happy provided bash is installed and in path.
+        val commands = arrayOf<String>("bash", "-c", command)
+        val rawLog: MutableList<String> = ArrayList()
+        try {
+            val p = r.exec(commands)
+            p.waitFor()
+            val b = BufferedReader(InputStreamReader(p.inputStream))
+            var line: String? = ""
+            while (b.readLine().also { line = it } != null) {
+                rawLog.add(line!!)
+                LOG.debug(line)
+            }
+            b.close()
+        } catch (e: Exception) {
+            LOG.error("Failed to execute bash with command: $command")
+            e.printStackTrace()
+            throw ServerError("Failed to execute bash with command: $command", e)
+        }
+
+        return SensorStatusResponse("SUCCESS", rawLog)
     }
 }

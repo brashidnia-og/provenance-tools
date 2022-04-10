@@ -42,7 +42,12 @@ dependencies {
 	// Swagger
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
 
+	// Provenance
+	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
