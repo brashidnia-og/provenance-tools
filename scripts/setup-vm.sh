@@ -82,5 +82,9 @@ sudo make localnet-start
 alias provenanced="sudo ~/go/src/github.com/provenance-io/provenance/build/provenanced"
 
 # Additional utilities
+# output formatter
 yes | sudo apt install jq
 
+# For backend support
+# Sensors (temps)
+yes | sudo apt install lm-sensors
