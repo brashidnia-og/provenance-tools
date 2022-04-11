@@ -22,7 +22,7 @@ yes | sudo apt-get install wget
 
 # Install go
 #sudo snap install go --classic
-wget -c https://dl.google.com/go/go1.17.4.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local
+wget -c https://dl.google.com/go/go1.17.7.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local
 echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/environment
 echo 'export GOROOT="/usr/local/go"'
 source /etc/environment
@@ -71,6 +71,7 @@ sudo mkdir -p ~/go/src/github.com/provenance-io
 cd ~/go/src/github.com/provenance-io
 yes | sudo git clone https://github.com/provenance-io/provenance.git
 cd provenance
+git checkout tags/v1.8.0 -b v1.8.0
 pwd
 
 # Build and run localnet

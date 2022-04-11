@@ -1,5 +1,6 @@
 package com.brashidnia.provenance.tools.service.frameworks.web.error
 
+import com.brashidnia.provenance.tools.service.domain.api.error.NotFoundError
 import com.brashidnia.provenance.tools.service.domain.api.error.ServerError
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
@@ -24,7 +25,7 @@ class GlobalErrorHandler : WebFluxResponseStatusExceptionHandler() {
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         when (ex) {
-//            is NotFoundError -> exchange.response.statusCode = HttpStatus.NOT_FOUND
+            is NotFoundError -> exchange.response.statusCode = HttpStatus.NOT_FOUND
 //            is ConflictError -> exchange.response.statusCode = HttpStatus.CONFLICT
 //            is BadRequestError -> exchange.response.statusCode = HttpStatus.BAD_REQUEST
             is ServerError -> exchange.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR

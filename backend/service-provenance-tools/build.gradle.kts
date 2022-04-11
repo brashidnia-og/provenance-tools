@@ -34,13 +34,13 @@ dependencies {
 
 	// Spring
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
+//	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	// Jackson
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	// Swagger
-	implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
+//	implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
 
 	// Provenance
 	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")

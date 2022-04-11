@@ -4,7 +4,7 @@ data class StatusResponse(
     val status: String
 )
 
-data class SensorStatusResponse(
+data class CmdStatusResponse(
     val status: String,
     val logs: List<String>
 )
