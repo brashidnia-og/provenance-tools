@@ -32,6 +32,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+	// Apache
+	implementation("commons-io:commons-io:2.11.0")
+
 	// Spring
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 //	implementation("org.springframework.boot:spring-boot-starter-validation")
