@@ -37,6 +37,7 @@ dependencies {
 
 	// Spring
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 //	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	// Jackson
@@ -46,7 +47,7 @@ dependencies {
 //	implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
 
 	// Provenance
-	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")
+//	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 

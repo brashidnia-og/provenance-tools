@@ -20,7 +20,7 @@ class LogRotatorJob(
         val LOG = LoggerFactory.getLogger(LogRotatorJob::class.java.name)
     }
 
-    @Scheduled(fixedRate = ONE_HOUR_IN_MILLISECONDS)
+    @Scheduled(cron = "0 0 * * * *")
     fun rotate() {
         try {
             val dateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())

@@ -5,16 +5,19 @@ import com.brashidnia.provenance.tools.service.domain.api.StatusResponse
 import com.brashidnia.provenance.tools.service.domain.api.error.ServerError
 import com.brashidnia.provenance.tools.service.frameworks.command.CommandExecutorService
 import org.slf4j.LoggerFactory
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.Compiler.command
 
 @RestController
 @RequestMapping("/api/v1/status")
+@PreAuthorize("hasRole('USER')")
 class StatusController(
     private val commandExecutorService: CommandExecutorService
 ) {
@@ -23,40 +26,38 @@ class StatusController(
     }
 
     @GetMapping
-    fun getStatus(): StatusResponse {
-        return StatusResponse("WORKING")
-    }
+    fun getStatus(): Mono<StatusResponse> = Mono.just(StatusResponse("WORKING"))
 
     @GetMapping("/sensors")
-    fun getSensorStatus(): CmdStatusResponse {
+    fun getSensorStatus(): Mono<CmdStatusResponse> {
         val command = listOf("sensors")
         val rawLog = commandExecutorService.execute(command)
-        return CmdStatusResponse("SUCCESS", rawLog)
+        return Mono.just(CmdStatusResponse("SUCCESS", rawLog))
     }
 
     @GetMapping("/process")
-    fun getProcessStatus(): CmdStatusResponse {
+    fun getProcessStatus(): Mono<CmdStatusResponse> {
         val command = listOf<String>("ps aux")
         val rawLog = commandExecutorService.execute(command)
-        return CmdStatusResponse("SUCCESS", rawLog)
+        return Mono.just(CmdStatusResponse("SUCCESS", rawLog))
     }
 
     @GetMapping("/process/{filterWord}")
-    fun getProcessStatus(@PathVariable filterWord: String): CmdStatusResponse {
+    fun getProcessStatus(@PathVariable filterWord: String): Mono<CmdStatusResponse> {
         val command = listOf<String>("ps aux | grep $filterWord")
         val rawLog = commandExecutorService.execute(command)
-        return CmdStatusResponse("SUCCESS", rawLog)
+        return Mono.just(CmdStatusResponse("SUCCESS", rawLog))
     }
 
     @GetMapping("/memory")
-    fun getMemoryInfo(): CmdStatusResponse {
+    fun getMemoryInfo(): Mono<CmdStatusResponse> {
         val command = listOf<String>("free -m")
         val rawLog = commandExecutorService.execute(command)
-        return CmdStatusResponse("SUCCESS", rawLog)
+        return Mono.just(CmdStatusResponse("SUCCESS", rawLog))
     }
 
     @GetMapping("/memory/detailed")
-    fun getDetailedMemoryInfo(): CmdStatusResponse {
+    fun getDetailedMemoryInfo(): Mono<CmdStatusResponse> {
         val command = listOf<String>("cat /proc/meminfo")
 
         LOG.debug("Executing BASH command:\n   $command")
@@ -78,6 +79,6 @@ class StatusController(
             throw ServerError("Failed to execute bash with command: $command", e)
         }
 
-        return CmdStatusResponse("SUCCESS", rawLog)
+        return Mono.just(CmdStatusResponse("SUCCESS", rawLog))
     }
 }
