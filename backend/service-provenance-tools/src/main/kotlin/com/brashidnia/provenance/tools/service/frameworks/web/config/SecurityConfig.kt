@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
@@ -18,10 +20,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 class SecurityConfig(
     objectMapper: ObjectMapper
 ) {
-//    @Bean
-//    fun passwordEncoder(): PasswordEncoder? {
-//        return BCryptPasswordEncoder()
-//    }
+    @Bean
+    fun passwordEncoder(): PasswordEncoder? {
+        return BCryptPasswordEncoder()
+    }
 
     @Bean
     fun userDetailsService(): MapReactiveUserDetailsService? {
