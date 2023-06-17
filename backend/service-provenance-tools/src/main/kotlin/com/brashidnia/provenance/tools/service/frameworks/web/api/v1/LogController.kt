@@ -21,7 +21,6 @@ class LogController(private val objectMapper: ObjectMapper) {
         val LOG = LoggerFactory.getLogger(LogController::class.java.name)
     }
 
-
     @GetMapping("/latest/{chainId}")
     fun getLatestLogs(
         principal: Principal,
@@ -67,6 +66,7 @@ class LogController(private val objectMapper: ObjectMapper) {
             val logs = when (format) {
                 LogFormat.STRING -> logLines
                 LogFormat.JSON -> parseToJson(rawLines = logLines)
+                else -> throw IllegalArgumentException("Unsupported log format")
             }
             Mono.just(LogResponse("SUCCESS", logs))
         }
