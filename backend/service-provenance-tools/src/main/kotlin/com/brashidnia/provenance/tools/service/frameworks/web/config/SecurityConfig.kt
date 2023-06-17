@@ -25,12 +25,17 @@ class SecurityConfig(
 
     @Bean
     fun userDetailsService(): MapReactiveUserDetailsService? {
-        val user = User
-            .withUsername("bobak")
+        val admin = User
+            .withUsername("admin")
             .password("{noop}SETPASSWORDHERE")
             .roles("USER", "ADMIN")
             .build()
-        return MapReactiveUserDetailsService(user)
+        val figureUser = User
+            .withUsername("figure")
+            .password("figure")
+            .roles("USER")
+            .build()
+        return MapReactiveUserDetailsService(admin, figureUser)
     }
 
     @Bean
