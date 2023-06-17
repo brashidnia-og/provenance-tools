@@ -1,5 +1,6 @@
 package com.brashidnia.provenance.tools.service.frameworks.web.api.v1
 
+import com.brashidnia.provenance.tools.service.domain.api.LogFormat
 import com.brashidnia.provenance.tools.service.domain.api.LogResponse
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -20,10 +21,12 @@ class LogController(private val objectMapper: ObjectMapper) {
         val LOG = LoggerFactory.getLogger(LogController::class.java.name)
     }
 
+
     @GetMapping("/latest/{chainId}")
     fun getLatestLogs(
         principal: Principal,
-        @PathVariable chainId: String,
+        @PathVariable chainId: String? = "pio-testnet-1",
+        @RequestParam format: LogFormat? = LogFormat.JSON,
         @RequestParam lines: Int?
     ): Mono<LogResponse> =
         Mono.defer {
@@ -61,7 +64,11 @@ class LogController(private val objectMapper: ObjectMapper) {
                 processableFiles = processableFiles.subList(fromIndex = 1, toIndex = processableFiles.size)
             }
 
-            Mono.just(LogResponse("SUCCESS", parseToJson(rawLines = logLines)))
+            val logs = when (format) {
+                LogFormat.STRING -> logLines
+                LogFormat.JSON -> parseToJson(rawLines = logLines)
+            }
+            Mono.just(LogResponse("SUCCESS", logs))
         }
 
     fun parseToJson(rawLines: List<String>): List<JsonNode> =

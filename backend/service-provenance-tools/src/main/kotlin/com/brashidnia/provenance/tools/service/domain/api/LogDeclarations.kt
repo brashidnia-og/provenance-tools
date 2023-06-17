@@ -1,8 +1,11 @@
 package com.brashidnia.provenance.tools.service.domain.api
 
-import com.fasterxml.jackson.databind.JsonNode
-
 class LogResponse(
     val status: String,
-    val logs: List<JsonNode>
+    val logs: List<Any>
 )
+
+enum class LogFormat {
+    STRING,
+    JSON
+}
