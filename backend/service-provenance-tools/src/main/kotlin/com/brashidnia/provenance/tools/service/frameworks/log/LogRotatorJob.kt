@@ -14,25 +14,32 @@ const val ONE_HOUR_IN_MILLISECONDS = 1000L * 60 * 60
 class LogRotatorJob(
     private val commandExecutorService: CommandExecutorService,
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd.HH:mm:ssz"),
-    private val logFilePath: String = "/var/provenance/pio-mainnet-1/log"
 ) {
+    private val networks: List<String> = listOf("pio-testnet-1", "pio-mainnet-1")
+    private val logFileDirFormat: String = "/var/provenance/{}/log"
+
+    private fun getLogFileDir(networkName: String): String = logFileDirFormat.format(networkName)
+
     companion object {
         val LOG = LoggerFactory.getLogger(LogRotatorJob::class.java.name)
     }
 
     @Scheduled(cron = "0 0 * * * *")
     fun rotate() {
-        try {
-            val dateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-            val formattedDateTime = dateTime.format(dateTimeFormatter)
+        for (network in networks) {
+            try {
+                val dateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+                val formattedDateTime = dateTime.format(dateTimeFormatter)
+                val logFilePath = getLogFileDir(network)
 
-            LOG.info("Backing up log: ${logFilePath}/node.log to ${logFilePath}/node_$formattedDateTime")
-            commandExecutorService.execute(listOf("cp ${logFilePath}/node.log ${logFilePath}/node_$formattedDateTime"))
+                LOG.info("Backing up log: ${logFilePath}/node.log to ${logFilePath}/node_$formattedDateTime")
+                commandExecutorService.execute(listOf("cp ${logFilePath}/node.log ${logFilePath}/node_$formattedDateTime"))
 
-            LOG.info("Truncating active log: ${logFilePath}/node.log")
-            commandExecutorService.execute(listOf(": > ${logFilePath}/node.log"))
-        } catch (e: Exception) {
-            e.printStackTrace()
+                LOG.info("Truncating active log: ${logFilePath}/node.log")
+                commandExecutorService.execute(listOf(": > ${logFilePath}/node.log"))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
