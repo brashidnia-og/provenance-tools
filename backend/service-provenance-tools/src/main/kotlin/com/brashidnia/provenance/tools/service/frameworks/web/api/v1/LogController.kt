@@ -1,6 +1,8 @@
 package com.brashidnia.provenance.tools.service.frameworks.web.api.v1
 
 import com.brashidnia.provenance.tools.service.domain.api.LogResponse
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.io.input.ReversedLinesFileReader
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
@@ -13,7 +15,7 @@ import java.security.Principal
 @RestController
 @RequestMapping("/api/v1/logs")
 @PreAuthorize("hasRole('USER')")
-class LogController {
+class LogController(private val objectMapper: ObjectMapper) {
     companion object {
         val LOG = LoggerFactory.getLogger(LogController::class.java.name)
     }
@@ -59,8 +61,11 @@ class LogController {
                 processableFiles = processableFiles.subList(fromIndex = 1, toIndex = processableFiles.size)
             }
 
-            Mono.just(LogResponse("SUCCESS", logLines))
+            Mono.just(LogResponse("SUCCESS", parseToJson(rawLines = logLines)))
         }
+
+    fun parseToJson(rawLines: List<String>): List<JsonNode> =
+        rawLines.map { rawLine -> objectMapper.readValue(rawLine, JsonNode::class.java) }
 
     fun getMaxFile(filesNamesSortedDescending: List<String>): String? = filesNamesSortedDescending.firstOrNull()
 
