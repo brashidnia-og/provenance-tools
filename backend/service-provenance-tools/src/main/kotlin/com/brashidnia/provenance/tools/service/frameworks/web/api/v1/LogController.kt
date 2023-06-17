@@ -24,11 +24,13 @@ class LogController(private val objectMapper: ObjectMapper) {
     @GetMapping("/latest/{chainId}")
     fun getLatestLogs(
         principal: Principal,
-        @PathVariable chainId: String? = "pio-testnet-1",
-        @RequestParam format: LogFormat? = LogFormat.JSON,
+        @PathVariable chainId: String,
+        @RequestParam format: LogFormat?,
         @RequestParam lines: Int?
     ): Mono<LogResponse> =
         Mono.defer {
+            val logFormat = format ?: LogFormat.JSON
+
             LOG.info(chainId)
 
             val totalLinesToProcess = lines ?: 100
@@ -63,7 +65,7 @@ class LogController(private val objectMapper: ObjectMapper) {
                 processableFiles = processableFiles.subList(fromIndex = 1, toIndex = processableFiles.size)
             }
 
-            val logs = when (format) {
+            val logs = when (logFormat) {
                 LogFormat.STRING -> logLines
                 LogFormat.JSON -> parseToJson(rawLines = logLines)
                 else -> throw IllegalArgumentException("Unsupported log format")
