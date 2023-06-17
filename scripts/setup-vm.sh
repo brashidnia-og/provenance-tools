@@ -1,6 +1,8 @@
 #!/bin/bash
+# Works with Ubuntu20.04LTS
 
 # Initial update repository
+yes | sudo apt update
 yes | sudo apt-get update
 
 # Get docker repo
@@ -71,14 +73,13 @@ sudo mkdir -p ~/go/src/github.com/provenance-io
 cd ~/go/src/github.com/provenance-io
 yes | sudo git clone https://github.com/provenance-io/provenance.git
 cd provenance
-git checkout tags/v1.8.0 -b v1.8.0
+git checkout tags/v1.15.1 -b v1.15.1
 pwd
 
 # Build and run localnet
 sudo make clean
 sudo make build
 sudo make install
-sudo make localnet-start
 
 alias provenanced="sudo ~/go/src/github.com/provenance-io/provenance/build/provenanced"
 
@@ -89,3 +90,8 @@ yes | sudo apt install jq
 # For backend support
 # Sensors (temps)
 yes | sudo apt install lm-sensors
+
+sudo make localnet-start
+# port 26657 is not openly accessible over the internet via public ip using `make run`
+# Can use a port-forwarding service like rinetd to forward ports to external ports
+#sudo make run

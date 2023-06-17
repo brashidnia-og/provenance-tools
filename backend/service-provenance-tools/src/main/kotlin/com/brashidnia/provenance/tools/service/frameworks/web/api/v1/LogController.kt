@@ -26,17 +26,64 @@ class LogController {
     ): Mono<LogResponse> =
         Mono.defer {
             LOG.info(chainId)
-            val filePath = "/var/provenance/$chainId/log/node.log"
-            val file = File(filePath)
-            var counter = 0
-            val rawLog: MutableList<String> = ArrayList<String>()
-            val reader = ReversedLinesFileReader(file, Charset.defaultCharset())
-            val numberOfLines = lines ?: 100
-            while (counter < numberOfLines) {
-                val line = reader.readLine() ?: break
-                rawLog.add(0, line)
-                counter++
+
+            val totalLinesToProcess = lines ?: 100
+            val fileDir = "/var/provenance/$chainId/log/"
+            val currentFileName = "node.log"
+            val filesInDir = checkNotNull(File(fileDir).listFiles()).map { it.name }.sortedDescending()
+            var processableFiles: List<String> = filesInDir.filter { it != currentFileName }
+
+            var totalLinesProcessed = 0;
+
+            // Read from the active node.log file first
+            val activeFilePath = "$fileDir$currentFileName"
+            val logLines: MutableList<String> = readLines(
+                quantityOfLinesToRead = lines,
+                filePath = activeFilePath
+            ).toMutableList()
+            totalLinesProcessed += logLines.size
+
+
+            while (totalLinesProcessed <= totalLinesToProcess) {
+                // Get next log file (time order). If not exist, return current result
+                val maxFileName = getMaxFile(processableFiles) ?: break
+
+                logLines.addAll(
+                    readLines(
+                        quantityOfLinesToRead = totalLinesToProcess - totalLinesProcessed,
+                        filePath = "$fileDir$maxFileName"
+                    )
+                )
+
+                // Mark log file as processed
+                processableFiles = processableFiles.subList(fromIndex = 1, toIndex = processableFiles.size)
             }
-            Mono.just(LogResponse("SUCCESS", rawLog))
+
+            Mono.just(LogResponse("SUCCESS", logLines))
         }
+
+    fun getMaxFile(filesNamesSortedDescending: List<String>): String? = filesNamesSortedDescending.firstOrNull()
+
+    fun readLines(quantityOfLinesToRead: Int?, filePath: String): List<String> {
+        val file = File(filePath)
+        var counter = 0
+        val rawLog: MutableList<String> = ArrayList<String>()
+
+        // Read from end to beginning (newest to oldest)
+        val reader = ReversedLinesFileReader(file, Charset.defaultCharset())
+        val numberOfLines = quantityOfLinesToRead ?: 100
+
+        // Read lines until limit is reached, or no lines left to read
+        while (counter < numberOfLines) {
+            val line = reader.readLine()
+            // Break if the EOF has been reached
+            if (line.isNullOrBlank()) break
+
+            // Add older line to the beginning
+            rawLog.add(0, line)
+            counter++
+        }
+
+        return rawLog
+    }
 }
