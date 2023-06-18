@@ -20,6 +20,5 @@ class AppConfig {
 
     @Primary
     @Bean
-    fun objectMapper(): ObjectMapper = ObjectMapper()
-        .registerModule(JavaTimeModule())
+    fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(JavaTimeModule())
 }

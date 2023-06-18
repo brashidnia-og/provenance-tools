@@ -4,6 +4,7 @@ import com.brashidnia.provenance.tools.service.frameworks.command.CommandExecuto
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -17,8 +18,8 @@ class LogRotatorJob(
     private val deleteDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 ) {
     private val networks: List<String> = listOf("pio-testnet-1", "pio-mainnet-1")
-    private val logFileDirFormat: String = "/var/provenance/{}/log"
-    private val daysToKeep: Long = 2
+    private val logFileDirFormat: String = "/var/provenance/%s/log"
+    private val daysToKeep: Long = 1
 
     private fun getLogFileDir(networkName: String): String = logFileDirFormat.format(networkName)
 
@@ -27,7 +28,8 @@ class LogRotatorJob(
     }
 
     // Once an hour at (XX:00:00)
-    @Scheduled(cron = "0 0 * * * *")
+//    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     fun rotate() {
         for (network in networks) {
             try {
@@ -47,7 +49,8 @@ class LogRotatorJob(
     }
 
     // Once a day (at 00:00:00)
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     fun delete() {
         for (network in networks) {
             try {
@@ -57,11 +60,20 @@ class LogRotatorJob(
                 val formattedOldestDateTime = oldestDateTimeToKeep.format(deleteDateTimeFormatter)
                 val logFilePath = getLogFileDir(network)
 
+                val filesToDelete = getFilesToDelete(logFilePath, formattedOldestDateTime)
                 LOG.info("Deleting logs older than: $formattedOldestDateTime")
-                commandExecutorService.execute(listOf("rm $logFilePath/node_$deleteDateTimeFormatter*"))
+
+                for (file in filesToDelete) {
+                    commandExecutorService.execute(listOf("rm $logFilePath/$file"))
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun getFilesToDelete(dir: String, oldestDateTimeToKeep: String): List<String> {
+        val filesInDir = checkNotNull(File(dir).listFiles()).map { it.name }
+        return filesInDir.filter { it < "node_$oldestDateTimeToKeep" }
     }
 }
