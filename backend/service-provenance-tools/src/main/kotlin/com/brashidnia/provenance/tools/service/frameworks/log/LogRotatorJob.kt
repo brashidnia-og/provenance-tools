@@ -59,9 +59,9 @@ class LogRotatorJob(
 
                 val formattedOldestDateTime = oldestDateTimeToKeep.format(deleteDateTimeFormatter)
                 val logFilePath = getLogFileDir(network)
-
+                
+                LOG.info("Deleting logs in $logFilePath older than: $formattedOldestDateTime")
                 val filesToDelete = getFilesToDelete(logFilePath, formattedOldestDateTime)
-                LOG.info("Deleting $network logs older than: $formattedOldestDateTime")
 
                 for (file in filesToDelete) {
                     commandExecutorService.execute(listOf("rm $logFilePath/$file"))
