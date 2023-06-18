@@ -27,9 +27,8 @@ class LogRotatorJob(
         val LOG = LoggerFactory.getLogger(LogRotatorJob::class.java.name)
     }
 
-    // Once an hour at (XX:00:00)
-//    @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 * * * * *")
+    // Once an hour (at yyyy-MM-dd XX:00:00)
+    @Scheduled(cron = "0 0 * * * *")
     fun rotate() {
         for (network in networks) {
             try {
@@ -48,9 +47,8 @@ class LogRotatorJob(
         }
     }
 
-    // Once a day (at 00:00:00)
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
+    // Once a day (at yyyy-MM-dd 00:00:00)
+    @Scheduled(cron = "0 0 0 * * *")
     fun delete() {
         for (network in networks) {
             try {
