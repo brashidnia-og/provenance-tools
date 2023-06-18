@@ -37,8 +37,8 @@ class LogRotatorJob(
                 val formattedDateTime = dateTime.format(dateTimeFormatter)
                 val logFilePath = getLogFileDir(network)
 
-                LOG.info("Backing up log: $logFilePath/node.log to $logFilePath/node_$formattedDateTime")
-                commandExecutorService.execute(listOf("cp $logFilePath/node.log $logFilePath/node_$formattedDateTime"))
+                LOG.info("Backing up log: $logFilePath/node.log to $logFilePath/node_$formattedDateTime.log")
+                commandExecutorService.execute(listOf("cp $logFilePath/node.log $logFilePath/node_$formattedDateTime.log"))
 
                 LOG.info("Truncating active log: $logFilePath/node.log")
                 commandExecutorService.execute(listOf(": > $logFilePath/node.log"))
@@ -61,7 +61,7 @@ class LogRotatorJob(
                 val logFilePath = getLogFileDir(network)
 
                 val filesToDelete = getFilesToDelete(logFilePath, formattedOldestDateTime)
-                LOG.info("Deleting logs older than: $formattedOldestDateTime")
+                LOG.info("Deleting $network logs older than: $formattedOldestDateTime")
 
                 for (file in filesToDelete) {
                     commandExecutorService.execute(listOf("rm $logFilePath/$file"))
