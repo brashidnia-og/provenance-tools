@@ -76,13 +76,6 @@ cd provenance
 git checkout tags/v1.16.0 -b v1.16.0
 pwd
 
-# Build and run localnet
-sudo make clean
-sudo make build
-sudo make install
-
-alias provenanced="sudo ~/go/src/github.com/provenance-io/provenance/build/provenanced"
-
 # Additional utilities
 # output formatter
 yes | sudo apt install jq
@@ -90,8 +83,3 @@ yes | sudo apt install jq
 # For backend support
 # Sensors (temps)
 yes | sudo apt install lm-sensors
-
-sudo make localnet-start
-# port 26657 is not openly accessible over the internet via public ip using `make run`
-# Can use a port-forwarding service like rinetd to forward ports to external ports
-#sudo make run
