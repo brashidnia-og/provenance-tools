@@ -15,7 +15,7 @@ class LogRotatorJob(
     private val commandExecutorService: CommandExecutorService,
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd.HH:mm:ssz"),
     private val deleteDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-    @Qualifier("networkConfigs") private val  networkConfigs: Map<String, String>
+    @Qualifier("networkConfigs") private val networkConfigs: Map<String, String>
 ) {
     private val logFileDirFormat: String = "%s/log"
     private val daysToKeep: Long = 2

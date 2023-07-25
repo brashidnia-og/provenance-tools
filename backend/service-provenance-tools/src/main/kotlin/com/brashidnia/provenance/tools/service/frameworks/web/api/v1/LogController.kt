@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.io.input.ReversedLinesFileReader
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
@@ -16,10 +17,18 @@ import java.security.Principal
 @RestController
 @RequestMapping("/api/v1/logs")
 @PreAuthorize("hasRole('USER')")
-class LogController(private val objectMapper: ObjectMapper) {
+class LogController(
+    private val objectMapper: ObjectMapper,
+    @Qualifier("networkConfigs") private val networkConfigs: Map<String, String>
+) {
     companion object {
         val LOG = LoggerFactory.getLogger(LogController::class.java.name)
     }
+
+    private val logFileDirFormat: String = "%s/log/"
+    private fun getLogFileDir(networkName: String): String = networkConfigs[networkName]?.let {
+        logFileDirFormat.format(it)
+    } ?: error("Unsupported network: $networkName")
 
     @GetMapping("/latest/{chainId}")
     fun getLatestLogs(
@@ -34,7 +43,7 @@ class LogController(private val objectMapper: ObjectMapper) {
             LOG.info(chainId)
 
             val totalLinesToProcess = lines ?: 100
-            val fileDir = "/var/provenance/$chainId/log/"
+            val fileDir = getLogFileDir(chainId)
             val currentFileName = "node.log"
             val filesInDir = checkNotNull(File(fileDir).listFiles()).map { it.name }.sortedDescending()
             var processableFiles: List<String> = filesInDir.filter { it != currentFileName }
