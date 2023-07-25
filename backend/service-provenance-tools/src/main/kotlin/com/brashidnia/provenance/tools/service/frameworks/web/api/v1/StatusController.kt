@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.Compiler.command
 
 @RestController
 @RequestMapping("/api/v1/status")
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('ADMIN')")
 class StatusController(
     private val commandExecutorService: CommandExecutorService
 ) {
