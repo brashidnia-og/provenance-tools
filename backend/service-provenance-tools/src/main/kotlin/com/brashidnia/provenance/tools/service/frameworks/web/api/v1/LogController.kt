@@ -4,6 +4,7 @@ import com.brashidnia.provenance.tools.service.domain.api.LogFormat
 import com.brashidnia.provenance.tools.service.domain.api.LogResponse
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.io.input.ReversedLinesFileReader
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -83,7 +84,14 @@ class LogController(
         }
 
     fun parseToJson(rawLines: List<String>): List<JsonNode> =
-        rawLines.map { rawLine -> objectMapper.readValue(rawLine, JsonNode::class.java) }
+        rawLines.map { rawLine ->
+            objectMapper.readValue(rawLine, ObjectNode::class.java).let {
+                val parsedMessage: JsonNode = objectMapper.valueToTree(it["message"].textValue().split("\n"))
+                it.set<JsonNode>("message", parsedMessage)
+                it
+            }
+        }
+
 
     fun getMaxFile(filesNamesSortedDescending: List<String>): String? = filesNamesSortedDescending.firstOrNull()
 
