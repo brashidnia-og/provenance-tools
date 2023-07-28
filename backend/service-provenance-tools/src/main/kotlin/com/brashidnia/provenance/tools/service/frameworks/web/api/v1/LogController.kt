@@ -84,11 +84,16 @@ class LogController(
         }
 
     fun parseToJson(rawLines: List<String>): List<JsonNode> =
-        rawLines.map { rawLine ->
-            objectMapper.readValue(rawLine, ObjectNode::class.java).let {
-                val parsedMessage: JsonNode = objectMapper.valueToTree(it["message"].textValue().split("\n"))
-                it.set<JsonNode>("message", parsedMessage)
-                it
+        rawLines.mapNotNull { rawLine ->
+            try {
+                objectMapper.readValue(rawLine, ObjectNode::class.java).let {
+                    val parsedMessage: JsonNode = objectMapper.valueToTree(it["message"].textValue().split("\n"))
+                    it.set<JsonNode>("message", parsedMessage)
+                    it
+                }
+            } catch (e: Exception) {
+                LOG.warn("Failed to parse line: '$rawLine'", e)
+                null
             }
         }
 
