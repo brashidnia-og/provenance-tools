@@ -3,7 +3,6 @@ package com.brashidnia.provenance.tools.script
 import com.brashidnia.provenance.tools.shared.client.ChainId
 import com.brashidnia.provenance.tools.shared.client.QuickSyncClient
 import com.brashidnia.provenance.tools.shared.extension.toPrettyJson
-import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -23,7 +22,7 @@ val ktorHttpClient = HttpClient(CIO) {
 val gcClient = StorageOptions.getDefaultInstance().getService()
 val quickSyncClient = QuickSyncClient(gcClient, ChainId.TESTNET)
 
-fun main (vararg args: String) {
+fun main(vararg args: String) {
     val backups = runBlocking { quickSyncClient.getBackups() }
     val latestIndexed = backups
         .filter { it.name.contains("indexed") }
