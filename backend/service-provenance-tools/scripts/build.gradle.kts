@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("com.brashidnia.kotlin-library-conventions")
 	id("org.asciidoctor.convert") version "1.5.8"
 	kotlin("jvm")
 }

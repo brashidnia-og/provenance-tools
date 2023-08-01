@@ -1,13 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("com.brashidnia.kotlin-library-conventions")
 	id("org.springframework.boot") version "2.7.12"
 	id("io.spring.dependency-management") version "1.1.0"
 	id("org.asciidoctor.convert") version "1.5.8"
 	kotlin("jvm")
 	kotlin("plugin.spring") version "1.8.22"
-//	kotlin("jvm") version "1.8.22"
-//	kotlin("plugin.spring") version "1.8.22"
 }
 
 group = "com.brashidnia.provenance.tools"

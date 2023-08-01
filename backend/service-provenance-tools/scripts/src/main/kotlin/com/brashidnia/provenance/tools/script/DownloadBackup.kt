@@ -33,6 +33,6 @@ fun main (vararg args: String) {
     println(latestIndexed.toPrettyJson())
 
     runBlocking {
-        quickSyncClient.download(latestIndexed, "/home/bobak/Downloads/${latestIndexed.name}")
+        quickSyncClient.downloadWithSpeed(latestIndexed, "/home/bobak/Downloads/${latestIndexed.name}")
     }
 }
