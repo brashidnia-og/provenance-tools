@@ -29,8 +29,7 @@ fun main (vararg args: String) {
         .filter { it.name.contains("indexed") }
         .sortedBy { it.metadata?.get("provenance-version") ?: "v0.0.0" }
         .last()
-    println("LAST")
-    println(latestIndexed.toPrettyJson())
+    println("Latest Indexed: ${latestIndexed.toPrettyJson()}")
 
     runBlocking {
         quickSyncClient.downloadWithSpeed(latestIndexed, "/home/bobak/Downloads/${latestIndexed.name}")
