@@ -1,13 +1,10 @@
-package com.brashidnia.provenance.tools.service.frameworks.command
+package com.brashidnia.provenance.tools.shared.frameworks.command
 
-import com.brashidnia.provenance.tools.service.domain.api.error.ServerError
-import com.brashidnia.provenance.tools.service.frameworks.web.api.v1.StatusController
+import com.brashidnia.provenance.tools.shared.domain.api.error.ServerError
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-@Service
 class CommandExecutorService {
     companion object {
         val LOG = LoggerFactory.getLogger(CommandExecutorService::class.java.name)

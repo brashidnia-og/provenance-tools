@@ -2,9 +2,17 @@ package com.brashidnia.provenance.tools.service.config
 
 import com.brashidnia.provenance.tools.service.config.properties.AppProperties
 import com.brashidnia.provenance.tools.service.config.properties.PbNodeProperties
+import com.brashidnia.provenance.tools.shared.client.ChainId
+import com.brashidnia.provenance.tools.shared.client.QuickSyncClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import org.springframework.beans.factory.annotation.Qualifier
+import com.google.cloud.storage.Storage
+import com.google.cloud.storage.StorageOptions
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -30,4 +38,22 @@ class AppConfig(private val pbNodeProperties: PbNodeProperties) {
         "pio-testnet-1" to pbNodeProperties.testnetDir,
         "pio-mainnet-1" to pbNodeProperties.mainnetDir
     )
+
+    @Bean
+    open fun ktorHttpClient(): HttpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+    }
+
+    @Bean
+    fun storage() = StorageOptions.getDefaultInstance().getService()
+
+    @Bean
+    fun quickSyncClients(
+        gc: Storage
+    ): Map<ChainId, QuickSyncClient> = ChainId.values().associateWith { QuickSyncClient(gc, it) }
 }
