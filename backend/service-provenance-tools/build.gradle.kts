@@ -20,14 +20,14 @@ allprojects {
 }
 
 object CustomSpec {
-    val JVM_VERSION = JavaVersion.VERSION_11
+    val JVM_VERSION = SdkVersions.Java
 }
 
 subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
         kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            jvmTarget = SdkVersions.Java.toString()
 //            allWarningsAsErrors = true
         }
     }
@@ -35,6 +35,8 @@ subprojects {
     configurations {
         all {
             exclude(group = "com.google.guava", module = "listenablefuture")
+            exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+            exclude(group = "org.slf4j", module = "slf4j-log4j12")
         }
     }
 }

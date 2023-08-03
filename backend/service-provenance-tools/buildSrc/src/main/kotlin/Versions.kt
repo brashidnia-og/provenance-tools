@@ -1,3 +1,5 @@
+import org.gradle.api.JavaVersion
+
 object PackageVersions {
     const val AwsDynamoDb = "1.12.367"
     const val AwsSdk = "2.19.3"
@@ -30,4 +32,8 @@ object PackageVersions {
 
 object PluginVersions {
     const val Protobuf = "0.9.3"
+}
+
+object SdkVersions {
+    val Java = JavaVersion.VERSION_17
 }

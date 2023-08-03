@@ -1,17 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.brashidnia.kotlin-library-conventions")
-	id("org.springframework.boot") version "2.7.12"
-	id("io.spring.dependency-management") version "1.1.0"
+    id("com.brashidnia.kotlin-application-conventions")
+	id("org.springframework.boot") version PackageVersions.SpringBoot
+	id("io.spring.dependency-management") version PackageVersions.SpringDependency
+    id("org.jetbrains.kotlin.plugin.allopen") version PackageVersions.Kotlin
+    id("org.jetbrains.kotlin.plugin.spring") version PackageVersions.Kotlin
 	id("org.asciidoctor.convert") version "1.5.8"
-	kotlin("jvm")
-	kotlin("plugin.spring") version "1.8.22"
 }
 
 group = "com.brashidnia.provenance.tools"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = SdkVersions.Java
 
 repositories {
 	mavenCentral()
@@ -43,16 +43,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 //	implementation("org.springframework.boot:spring-boot-starter-validation")
 
-	// Jackson
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
 	// Swagger
 //	implementation("org.springdoc:springdoc-openapi-ui:1.6.7")
 
 	// Provenance
 //	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")
 
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
     listOf(
         // Kotlin
         Dependencies.Kotlin.Reflect,
@@ -73,6 +69,8 @@ dependencies {
 //        Dependencies.Guava.ListenableFuture,
     ).map { it.implementation(this) }
 
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
 	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
@@ -82,7 +80,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
+		jvmTarget = SdkVersions.Java.toString()
 	}
 }
 
@@ -90,11 +88,12 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-tasks.test {
-//	outputs.dir(snippetsDir)
-}
+tasks.test {}
 
-//tasks.asciidoctor {
-////	inputs.dir(snippetsDir)
-//	dependsOn(test)
-//}
+configurations {
+    all {
+        exclude(group = "com.google.guava", module = "listenablefuture")
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+        exclude(group = "org.slf4j", module = "slf4j-log4j12")
+    }
+}

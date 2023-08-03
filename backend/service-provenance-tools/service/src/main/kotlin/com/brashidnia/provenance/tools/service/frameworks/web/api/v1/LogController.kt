@@ -20,16 +20,19 @@ import java.security.Principal
 @PreAuthorize("hasRole('USER')")
 class LogController(
     private val objectMapper: ObjectMapper,
-    @Qualifier("networkConfigs") private val networkConfigs: Map<String, String>
+    @Qualifier("networkConfigs") private val networkConfigs: Map<String, List<String>>
 ) {
     companion object {
         val LOG = LoggerFactory.getLogger(LogController::class.java.name)
     }
 
     private val logFileDirFormat: String = "%s/log/"
-    private fun getLogFileDir(networkName: String): String = networkConfigs[networkName]?.let {
-        logFileDirFormat.format(it)
-    } ?: error("Unsupported network: $networkName")
+
+    // Todo always return first entry? or fallback
+    private fun getLogFileDir(networkName: String): String = networkConfigs[networkName]
+        ?.firstOrNull()?.let {
+            logFileDirFormat.format(it)
+        } ?: error("Unsupported network: $networkName")
 
     @GetMapping("/latest/{chainId}")
     fun getLatestLogs(

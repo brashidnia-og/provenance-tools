@@ -34,9 +34,9 @@ class AppConfig(private val pbNodeProperties: PbNodeProperties) {
     fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(JavaTimeModule())
 
     @Bean(name = ["networkConfigs"])
-    fun networkConfigs(): Map<String, String> = mapOf(
-        "pio-testnet-1" to pbNodeProperties.testnetDir,
-        "pio-mainnet-1" to pbNodeProperties.mainnetDir
+    fun networkConfigs(): Map<String, List<String>> = mapOf(
+        "pio-testnet-1" to pbNodeProperties.testnetDirList,
+        "pio-mainnet-1" to pbNodeProperties.mainnetDirList
     )
 
     @Bean
