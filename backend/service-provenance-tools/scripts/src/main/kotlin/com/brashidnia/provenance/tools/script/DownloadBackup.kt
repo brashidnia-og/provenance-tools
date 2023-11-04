@@ -22,6 +22,14 @@ val ktorHttpClient = HttpClient(CIO) {
 val gcClient = StorageOptions.getDefaultInstance().getService()
 val quickSyncClient = QuickSyncClient(gcClient, ChainId.TESTNET)
 
+/**
+ * GCLOUD CLI Command:
+ * gcloud storage cp gs://provenance-testnet-backups/latest-${version}-data-indexed.tar.gz   ./latest-${version}-data-indexed-${date}.tar.gz
+ *
+ *  Example:
+ *  gcloud storage cp gs://provenance-testnet-backups/latest-v1_17_0_rc1-data-indexed.tar.gz   ./latest-v1_17_0_rc1-data-indexed-23-11-03.tar.gz
+ *
+ */
 fun main(vararg args: String) {
     val backups = runBlocking { quickSyncClient.getBackups() }
     val latestIndexed = backups
