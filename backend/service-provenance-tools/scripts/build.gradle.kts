@@ -24,6 +24,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+    implementation("io.github.novacrypto:BIP39:2019.01.27")
 	// Provenance
 //	implementation("io.provenance.client:pb-grpc-client-kotlin:1.1.1")
     listOf(
@@ -44,6 +45,9 @@ dependencies {
         Dependencies.GoogleCloud.Storage,
         Dependencies.Guava.Core,
 //        Dependencies.Guava.ListenableFuture,
+
+        Dependencies.FigureTechWallet.Core,
+        Dependencies.Provenance.ProtoKotlin,
     ).map { it.implementation(this) }
 }
 
