@@ -42,7 +42,7 @@ class LogRotatorJob(
                     LOG.info("Truncating active log: $logFilePath/node.log")
                     commandExecutorService.execute(listOf(": > $logFilePath/node.log"))
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    LOG.error("Failed to rotate log for $network : $dirPath", e)
                 }
             }
         }
@@ -68,7 +68,7 @@ class LogRotatorJob(
                         commandExecutorService.execute(listOf("rm $logFilePath/$file"))
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    LOG.error("Failed to delete old logs for $network : $dirPath", e)
                 }
             }
         }
